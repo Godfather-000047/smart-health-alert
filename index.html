@@ -1,0 +1,89 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Smart Health Bracelet Alert</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f2f9f6;
+      text-align: center;
+      padding: 40px;
+    }
+    h1 {
+      color: #00695c;
+    }
+    .vital-box {
+      background-color: #e0f2f1;
+      margin: 10px auto;
+      padding: 15px;
+      width: 80%;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      font-size: 18px;
+    }
+    button {
+      padding: 12px 24px;
+      font-size: 16px;
+      margin: 20px;
+      background-color: #00897b;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #00695c;
+    }
+  </style>
+</head>
+<body>
+  <h1>Smart Health Bracelet by Mr. Jay</h1>
+  <div class="vital-box" id="vitals"></div>
+  <button onclick="simulateVitals()">Measure Vitals</button>
+  <button onclick="sendAlert()">Send Emergency SMS</button>
+
+  <script>
+    let vitals = { heartRate: 0, temperature: 0, oxygen: 0 };
+
+    function simulateVitals() {
+      vitals.heartRate = Math.floor(Math.random() * 40) + 60;
+      vitals.temperature = (36 + Math.random() * 2.5).toFixed(1);
+      vitals.oxygen = Math.floor(Math.random() * 10) + 91;
+
+      document.getElementById('vitals').innerHTML =
+        `Heart Rate: ${vitals.heartRate} bpm<br>` +
+        `Temperature: ${vitals.temperature} °C<br>` +
+        `Oxygen Level: ${vitals.oxygen} %`;
+
+      if (vitals.heartRate > 100 || vitals.heartRate < 60 ||
+          vitals.temperature < 36 || vitals.temperature > 37.5 ||
+          vitals.oxygen < 95) {
+        alert('⚠️ Abnormal vitals detected! You should send an alert.');
+      }
+    }
+
+    function sendAlert() {
+      fetch('https://textbelt.com/text', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          phone: '+2782XXXXXXX',
+          message: 'Vitals Abnormal! Emergency assistance needed.',
+          key: 'textbelt'
+        })
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          alert('✅ SMS sent successfully!');
+        } else {
+          alert('❌ SMS failed: ' + data.error);
+        }
+      });
+    }
+  </script>
+</body>
+</html>
